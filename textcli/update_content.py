@@ -1,4 +1,5 @@
 import os
+import io
 import logging
 
 import time
@@ -38,7 +39,7 @@ class Textcli:
 
         content = ''
 
-        with open(file_path) as f:
+        with io.open(file_path, mode="r", encoding="utf-8") as f:
             content = f.read()
 
         return content
@@ -55,8 +56,8 @@ class Textcli:
 
     def save_to_file(self, filename, overwrite):
 
-        with open(filename, 'w') as f:
-            f.write(self.content)
+        with io.open(filename, mode="w", encoding="utf-8") as f:
+            content = f.write(self.content)
 
         return
 

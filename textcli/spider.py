@@ -139,13 +139,13 @@ class Spider:
                     self.url_key = url_key
 
 
-    def save(self, dataz, password = False):
+    def save(self, data, password = False):
         
-        data = { "token": self.token, "slug": self.url, "data": dataz }
+        #data = { "token": self.token, "slug": self.url, "data": dataz }
 
-        if password != False:
-            setattr(current, 'password', password)
-        data = urlencode(data)
+        #if password != False:
+            #setattr(current, 'password', password)
+        data = urlencode({ "token": self.token, "slug": self.url, "data": data })
 
         request_obj = Request(self.save_url, data = data.encode('utf-8'), headers = {})
         request_obj = self.add_headers(request_obj)
