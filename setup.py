@@ -9,7 +9,7 @@ except ImportError:
 	from distutils.core import setup
 
 
-dependencies = ['docopt', 'termcolor', 'brotli', 'socketIO_client']
+dependencies = ['docopt', 'termcolor', 'brotli', 'python-socketio']
 
 
 def publish():

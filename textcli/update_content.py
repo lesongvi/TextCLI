@@ -9,7 +9,7 @@ class Textcli:
 
     def __init__(self, url_key, token, live_update, isWatch):
 
-        self.sio = socketio.Client()
+        self.sio = None
 
         self.url_key = url_key
         self.token = token
@@ -28,6 +28,7 @@ class Textcli:
         self.io = None
         
         if live_update:
+            self.sio = socketio.Client()
             self.sio.connect('https://live.textvn.com:443', namespaces=['/'])
             self.join_room()
             #self.current_hash = self.spider.detech_change()
