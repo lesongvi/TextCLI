@@ -115,15 +115,16 @@ def start():
 
 	try: 
 
-		cprint('Connecting to notevn.com....', MESSAGE)
+		cprint('Connecting to textvn.com....', MESSAGE)
 
 		if live_update:
 			cprint("\nLive update enabled!...")
 
 		if 'token' in rqn9_token:
-			text = Textcli(link, rqn9_token['token'], live_update)
+			text = Textcli(link, rqn9_token['token'], live_update, watch)
 
 	except Exception as e:
+		cprint(e)
 		cprint("\nError: Please follow the usage...", WARNING)
 
 		return -1
@@ -160,6 +161,7 @@ def start():
 					cprint('File changes saved',MESSAGE)
 
 		except  KeyboardInterrupt:
-
 			cprint('\nClosing Textcli', MESSAGE) 
 
+if __name__ == '__main__':
+    start()

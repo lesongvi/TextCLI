@@ -1,14 +1,15 @@
 import os
 import io
 import logging
-
 import time
-
 from textcli.spider import Spider
+import socketio
     
 class Textcli:
 
-    def __init__(self, url_key, token, live_update):
+    def __init__(self, url_key, token, live_update, isWatch):
+
+        self.sio = socketio.Client()
 
         self.url_key = url_key
         self.token = token
@@ -18,13 +19,40 @@ class Textcli:
 
         self.content = self.spider.content
         self.haspw = self.spider.hspass
+        self.isWatch = isWatch
+
+        self.filepath = ''
+        self.file_stamp = 0
+        self.socket_url = 'https://live.textvn.com'
+
+        self.io = None
         
         if live_update:
-            self.current_hash = self.spider.detech_change()
-            self.update_tab()
-    
+            self.sio.connect('https://live.textvn.com:443', namespaces=['/'])
+            self.join_room()
+            #self.current_hash = self.spider.detech_change()
+            #self.update_tab()
+
+    def join_room(self):
+        self.sio.sleep(1)
+        self.sio.emit('join_room', self.url_key, namespace='/')
+
+    def publish(self, content):
+
+        text_data = dict()
+
+        text_data['name'] = self.url_key
+        text_data['text'] = content
+        text_data['cursor_location'] = len(content)
+
+        self.sio.emit('editing', text_data, namespace='/')
+
+        if self.isWatch is False:
+            self.sio.sleep(0.5)
+            self.sio.disconnect();
 
     def update_tab(self):
+        # Todo
         while 1:
             if self.spider.detech_change() == self.current_hash:
                 pass
@@ -32,6 +60,7 @@ class Textcli:
                 print("Something wrong!")
                 break
             else:
+                self.current_hash = self.spider.detech_change()
                 break
             time.sleep(5)
 
@@ -55,9 +84,13 @@ class Textcli:
 
 
     def save_to_file(self, filename, overwrite):
+        
 
         with io.open(filename, mode="w", encoding="utf-8") as f:
-            content = f.write(self.content)
+            if self.content is None:
+                content = f.write("")
+            else:
+                content = f.write(self.content)
 
         return
 
@@ -76,6 +109,9 @@ class Textcli:
             self.content += file_content
         else:
             self.content = ''
+
+        if self.sio:
+            self.publish(self.content)
 
         self.spider.save(self.content)
 
